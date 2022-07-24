@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -39,6 +41,13 @@ func main() {
 		total += n
 		if buff[total-1] == '\r' {
 			fmt.Println(string(buff[:total]))
+			resp, err := http.Get(fmt.Sprintf("https://openlibrary.org/isbn/%s.json", buff[:total-1]))
+			if err != nil {
+				log.Println("get by isbn error:", err)
+			}
+
+			body, _ := ioutil.ReadAll(resp.Body)
+			fmt.Println(string(body))
 			total = 0
 		}
 
